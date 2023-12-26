@@ -1,0 +1,33 @@
+name: ".github/workflows/main.yml"
+content: |
+  name: CI
+
+  on: [push, pull_request]
+
+  jobs:
+    build:
+
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run getdate.sh script
+        run: bash scripts/getdate.sh
+
+      - name: Handle download operation
+        run: |
+          if [ "${download_tag}" = "Prerelease-Alpha" ] || [ "${download_tag}" = "Prerelease-Beta" ];then
+            url="https://github.com/MetaCubeX/mihomo/releases/download/${download_tag}/Clash.Meta-linux-amd64-compatible-alpha-0d07cf4.gz"
+            wget $url || echo "Download failed"
+          fi
