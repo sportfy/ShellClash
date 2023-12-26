@@ -9,7 +9,25 @@ error_down(){
 dir_avail(){
 	df $2 $1 |awk '{ for(i=1;i<=NF;i++){ if(NR==1){ arr[i]=$i; }else{ arr[i]=arr[i]" "$i; } } } END{ for(i=1;i<=NF;i++){ print arr[i]; } }' |grep -E 'Ava|可用' |awk '{print $2}'
 	}
-#导入订阅、配置文件相关
+# Function to check the downloaded file and unzip it
+check_and_unzip_file() {
+	local file_path=$1
+	if [[ -f "$file_path" ]] && [[ -s "$file_path" ]]; then
+		echo "Unzipping file: $file_path"
+		gzip -d "$file_path"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to unzip file."
+			return 1
+		fi
+	else
+		echo "Error: File does not exist or is empty."
+		return 1
+	fi
+	echo "File unzipped successfully."
+	return 0
+}
+
+# Import subscription, configuration file related
 linkconfig(){
 	echo -----------------------------------------------
 	echo 当前使用规则为：$(grep -aE '^5' $clashdir/configs/servers.list | sed -n ""$rule_link"p" | awk '{print $2}')
@@ -147,6 +165,7 @@ getlink(){
 				setconfig Url \'$Url_link\'
 				#获取在线yaml文件
 				getyaml
+				check_and_unzip_file "$link"
 			else
 				echo -----------------------------------------------
 				echo -e "\033[31m请先输入订阅或分享链接！\033[0m"
@@ -330,6 +349,7 @@ setrules(){
 			proxies_bypass=未启用
 		fi
 		setconfig proxies_bypass $proxies_bypass
+		check_and_unzip_file "$TMPDIR/clashrelease"
 		sleep 1		
 		setrules
 	;;
