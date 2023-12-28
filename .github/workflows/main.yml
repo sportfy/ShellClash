@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set download_tag variable
+      run: echo "download_tag=$(if [ "${{ github.ref }}" = "refs/heads/master" ]; then echo 'Prerelease-Alpha'; else echo 'Prerelease-Beta'; fi)" >> $GITHUB_ENV
+
+    - name: Download file
+      run: |
+        for i in {1..5}; do
+          wget -O file.tar.gz https://github.com/MetaCubeX/Clash.Meta/releases/download/${{ env.download_tag }}/Clash.Meta-linux-amd64-compatible-alpha-2e87c6f.gz && break
+          echo "Attempt $i of download failed, retrying..."
+          sleep 15
+        done
+      continue-on-error: true
+
+    - name: Use file
+      run: |
+        if [ -f file.tar.gz ]; then
+          tar -xzf file.tar.gz
+        else
+          echo "Error: File not found."
+          exit 1
+        fi
