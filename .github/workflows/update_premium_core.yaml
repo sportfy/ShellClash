@@ -27,6 +27,10 @@ jobs:
         mkdir tmp
         for arch in ${archs};do
           wget "${download_url}/${download_version}/clash-linux-${arch}-${download_version}.gz" -O - | gunzip -c > ./tmp/clash-linux-${arch}
+          if [ $? -ne 0 ]; then
+            echo "Error downloading file for architecture ${arch}"
+            continue
+          fi
           chmod +x ./tmp/clash-linux-${arch}
           if [ "${arch}" != "armv5" ];then
             if [[ ${arch} == mips* ]];then
