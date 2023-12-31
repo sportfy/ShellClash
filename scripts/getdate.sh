@@ -804,11 +804,26 @@ setcpucore(){
 		setconfig cpucore $cpucore
 	fi
 }
+url_exists() {
+  local url=$1
+  response=$(curl -o /dev/null -s -w "%{http_code}\n" -I "$url")
+  if [ "$response" != '200' ]; then
+    return 1
+  fi
+  return 0
+}
+
 getcore(){
 	[ -z "$clashcore" ] && clashcore=clashpre
 	[ -z "$cpucore" ] && getcpucore
 	#生成链接
 	[ -z "$custcorelink" ] && corelink="$update_url/bin/$clashcore/clash-linux-$cpucore" || corelink="$custcorelink"
+	# Check if URL exists
+	if ! url_exists "$corelink"; then
+		echo -e "
+The core file doesn't exist, please check!!!\n"
+		return 1
+	fi
 	#获取在线clash核心文件
 	echo -----------------------------------------------
 	echo 正在在线获取clash核心文件……
