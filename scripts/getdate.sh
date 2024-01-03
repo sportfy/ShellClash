@@ -733,6 +733,20 @@ clashlink(){
 gettar(){
 	$clashdir/start.sh webget $TMPDIR/clashfm.tar.gz $tarurl
 	if [ "$?" != "0" ];then
+		attempt_counter=0
+		max_attempts=5
+		while [ $attempt_counter -lt $max_attempts ]; do
+			attempt_counter=$((attempt_counter+1))
+			$clashdir/start.sh webget $TMPDIR/clashfm.tar.gz $tarurl
+			if [ "$?" = "0" ]; then
+				break
+			fi
+			sleep 5
+		done
+		if [ $attempt_counter -eq $max_attempts ]; then
+			echo -e "\033[31mFailed to download file after $max_attempts attempts.\033[0m"
+			exit 1
+		fi
 		echo -e "\033[33m文件下载失败！\033[0m"
 		error_down
 	else
@@ -813,7 +827,21 @@ getcore(){
 	echo -----------------------------------------------
 	echo 正在在线获取clash核心文件……
 	$clashdir/start.sh webget $TMPDIR/clash.new $corelink
-	if [ "$?" = "1" ];then
+	if [ "$?" != "0" ];then
+		attempt_counter=0
+		max_attempts=5
+		while [ $attempt_counter -lt $max_attempts ]; do
+			attempt_counter=$((attempt_counter+1))
+			$clashdir/start.sh webget $TMPDIR/clash.new $corelink
+			if [ "$?" = "0" ]; then
+				break
+			fi
+			sleep 5
+		done
+		if [ $attempt_counter -eq $max_attempts ]; then
+			echo -e "\033[31mFailed to download core file after $max_attempts attempts.\033[0m"
+			exit 1
+		fi
 		echo -e "\033[31m核心文件下载失败！\033[0m"
 		rm -rf $TMPDIR/clash.new
 		[ -z "$custcorelink" ] && error_down
@@ -933,7 +961,21 @@ getgeo(){
 	echo -----------------------------------------------
 	echo 正在从服务器获取数据库文件…………
 	$clashdir/start.sh webget $TMPDIR/$geoname $update_url/bin/geodata/$geotype
-	if [ "$?" = "1" ];then
+	if [ "$?" != "0" ];then
+		attempt_counter=0
+		max_attempts=5
+		while [ $attempt_counter -lt $max_attempts ]; do
+			attempt_counter=$((attempt_counter+1))
+			$clashdir/start.sh webget $TMPDIR/$geoname $update_url/bin/geodata/$geotype
+			if [ "$?" = "0" ]; then
+				break
+			fi
+			sleep 5
+		done
+		if [ $attempt_counter -eq $max_attempts ]; then
+			echo -e "\033[31mFailed to download database file after $max_attempts attempts.\033[0m"
+			exit 1
+		fi
 		echo -----------------------------------------------
 		echo -e "\033[31m文件下载失败！\033[0m"
 		error_down
@@ -1017,7 +1059,21 @@ getdb(){
 	echo -----------------------------------------------
 	echo 正在连接服务器获取安装文件…………
 	$clashdir/start.sh webget $TMPDIR/clashdb.tar.gz $dblink
-	if [ "$?" = "1" ];then
+	if [ "$?" != "0" ];then
+		attempt_counter=0
+		max_attempts=5
+		while [ $attempt_counter -lt $max_attempts ]; do
+			attempt_counter=$((attempt_counter+1))
+			$clashdir/start.sh webget $TMPDIR/clashdb.tar.gz $dblink
+			if [ "$?" = "0" ]; then
+				break
+			fi
+			sleep 5
+		done
+		if [ $attempt_counter -eq $max_attempts ]; then
+			echo -e "\033[31mFailed to download dashboard file after $max_attempts attempts.\033[0m"
+			exit 1
+		fi
 		echo -----------------------------------------------
 		echo -e "\033[31m文件下载失败！\033[0m"
 		echo -----------------------------------------------
@@ -1129,7 +1185,21 @@ getcrt(){
 	echo -----------------------------------------------
 	echo 正在连接服务器获取安装文件…………
 	$clashdir/start.sh webget $TMPDIR/ca-certificates.crt $crtlink
-	if [ "$?" = "1" ];then
+	if [ "$?" != "0" ];then
+		attempt_counter=0
+		max_attempts=5
+		while [ $attempt_counter -lt $max_attempts ]; do
+			attempt_counter=$((attempt_counter+1))
+			$clashdir/start.sh webget $TMPDIR/ca-certificates.crt $crtlink
+			if [ "$?" = "0" ]; then
+				break
+			fi
+			sleep 5
+		done
+		if [ $attempt_counter -eq $max_attempts ]; then
+			echo -e "\033[31mFailed to download certificate file after $max_attempts attempts.\033[0m"
+			exit 1
+		fi
 		echo -----------------------------------------------
 		echo -e "\033[31m文件下载失败！\033[0m"
 		error_down
