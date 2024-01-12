@@ -2,6 +2,9 @@
 # Copyright (C) Juewuy
 
 error_down(){
+	echo -e "\033[31m文件下载失败！请尝试切换至其他安装源后重新下载！\033[0m" 
+	echo -----------------------------------------------
+}(){
 	echo -e  "\033[33m请尝试切换至其他安装源后重新下载！\033[0m" 
 	sleep 1
 	setserver
@@ -1021,7 +1024,11 @@ getdb(){
 		echo -----------------------------------------------
 		echo -e "\033[31m文件下载失败！\033[0m"
 		echo -----------------------------------------------
-		error_down
+		error_down(){
+    echo -e  "\033[33m请尝试切换至其他安装源后重新下载！\033[0m"
+    sleep 1
+    setserver
+}
 		setdb
 	else
 		echo -e "\033[33m下载成功，正在解压文件！\033[0m"
@@ -1029,7 +1036,7 @@ getdb(){
 		tar -zxvf "$TMPDIR/clashdb.tar.gz" -C $dbdir > /dev/null
 		if [ $? -ne 0 ];then
 			tar -zxvf "$TMPDIR/clashdb.tar.gz" --no-same-permissions -C $dbdir > /dev/null
-			[ $? -ne 0 ] && echo "文件解压失败！" && rm -rf $TMPDIR/clashfm.tar.gz && exit 1 
+			[ $? -ne 0 ] && echo "文件解压失败！" && rm -rf $TMPDIR/clashdb.tar.gz && exit 1 
 		fi
 		#修改默认host和端口
 		if [ "$db_type" = "clashdb" -o "$db_type" = "meta_db" -o "$db_type" = "meta_xd" ];then
