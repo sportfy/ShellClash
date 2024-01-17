@@ -1137,7 +1137,7 @@ getcrt(){
 		echo -----------------------------------------------
 		mkdir -p $openssldir
 		mv -f $TMPDIR/ca-certificates.crt $crtdir
-		$clashdir/start.sh webget $TMPDIR/ssl_test https://baidu.com echooff rediron skipceroff
+		$clashdir/start.sh webget $TMPDIR/ssl_test https://$custcorelink echooff rediron skipceroff
 		if [ "$?" = "1" ];then
 			export CURL_CA_BUNDLE=$crtdir
 			echo "export CURL_CA_BUNDLE=$crtdir" >> /etc/profile
